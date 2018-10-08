@@ -24,6 +24,7 @@
 - (void)viewDidLoad {
 
     [super viewDidLoad];
+    //[self loadModelPicture];
     [self initDlib];
     [self initCamero];
     [self previewLayer];
@@ -35,6 +36,51 @@
     [self.view addSubview:baseView];
     [_bgraCamera startUp];
     // Do any additional setup after loading the view, typically from a nib.
+    
+//    UIImage* image = [wrapper getImage];
+//    UIImageView* imageView = [[UIImageView alloc] initWithImage:image];
+//    [imageView setFrame:CGRectMake(0, 0, image.size.width, image.size.height)];
+//    [self.view addSubview:imageView];
+}
+
+- (void) loadModelPicture
+{
+    NSString* imageName = [[NSBundle mainBundle] pathForResource:@"2223" ofType:@"jpg"];
+    UIImage* image = [UIImage imageNamed:imageName];
+    CIImage* imageCI = [CIImage imageWithCGImage:image.CGImage];
+    CIContext* context = [CIContext contextWithOptions:nil];
+    NSDictionary* param = [NSDictionary dictionaryWithObject:CIDetectorAccuracyHigh forKey:CIDetectorAccuracy ];
+    CIDetector* faceDector = [CIDetector detectorOfType:CIDetectorTypeFace context:context options:param];
+    NSArray* detectResult = [faceDector featuresInImage:imageCI];
+    CGRect detectRect;
+    UIImageView* vview = [[UIImageView alloc]init];
+    [vview setFrame:CGRectMake(0, 0, image.size.width, image.size.height)];
+    [vview setImage:image];
+    [self.view addSubview:vview];
+    CGSize ciImageSize =  imageCI.extent.size;
+    CGAffineTransform transform = CGAffineTransformMakeScale(1, -1);
+    transform = CGAffineTransformTranslate(transform, 0,-1*ciImageSize.height );
+    
+    if(detectResult.count>0)
+    {
+        CIFeature * feature = detectResult.firstObject;
+        detectRect = feature.bounds;
+        
+        
+   
+        detectRect = CGRectApplyAffineTransform(detectRect, transform);
+        
+        
+        UIView *faceView = [[UIView alloc] initWithFrame:detectRect];
+
+        faceView.layer.borderColor = [UIColor redColor].CGColor;
+        faceView.layer.borderWidth = 1;
+        UIView* resultView = [[UIView alloc] initWithFrame:vview.frame];
+        [resultView addSubview:faceView];
+        [self.view addSubview:resultView];
+        // [resultView setTransform:CGAffineTransformMakeScale(1, -1)];
+    }
+
 }
 
 -(AVSampleBufferDisplayLayer *)previewLayer{

@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		6D1A63CD2165E37B007A8A5F /* 2223.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 6D1A63CC2165E37B007A8A5F /* 2223.jpg */; };
 		6D3E8C17215C81DF0037A517 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 6D3E8C16215C81DF0037A517 /* AppDelegate.m */; };
 		6D3E8C1A215C81E00037A517 /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 6D3E8C19215C81E00037A517 /* ViewController.m */; };
 		6D3E8C1D215C81E00037A517 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 6D3E8C1B215C81E00037A517 /* Main.storyboard */; };
@@ -19,9 +20,12 @@
 		6D3E8C42215CB52C0037A517 /* Accelerate.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6D3E8C33215C82EE0037A517 /* Accelerate.framework */; };
 		6D3E8C44215CB92F0037A517 /* CoreMedia.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6D3E8C43215CB92F0037A517 /* CoreMedia.framework */; };
 		6D3E8C4A215E09650037A517 /* Camera.m in Sources */ = {isa = PBXBuildFile; fileRef = 6D3E8C49215E09650037A517 /* Camera.m */; };
+		6D3E8C4D215E1DAB0037A517 /* liudehua.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 6D3E8C4C215E1DAB0037A517 /* liudehua.jpg */; };
+		6D44CDAF215F8289004405D9 /* opencv2.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6D44CDAE215F8288004405D9 /* opencv2.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		6D1A63CC2165E37B007A8A5F /* 2223.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; name = 2223.jpg; path = landmark64/2223.jpg; sourceTree = "<group>"; };
 		6D3E8C12215C81DF0037A517 /* landmark64.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = landmark64.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		6D3E8C15215C81DF0037A517 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
 		6D3E8C16215C81DF0037A517 /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
@@ -44,6 +48,8 @@
 		6D3E8C43215CB92F0037A517 /* CoreMedia.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreMedia.framework; path = System/Library/Frameworks/CoreMedia.framework; sourceTree = SDKROOT; };
 		6D3E8C49215E09650037A517 /* Camera.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Camera.m; sourceTree = "<group>"; };
 		6D3E8C4B215E09710037A517 /* Camera.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Camera.h; sourceTree = "<group>"; };
+		6D3E8C4C215E1DAB0037A517 /* liudehua.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; name = liudehua.jpg; path = landmark64/liudehua.jpg; sourceTree = "<group>"; };
+		6D44CDAE215F8288004405D9 /* opencv2.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = opencv2.framework; path = landmark64/opencv2.framework; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -53,6 +59,7 @@
 			files = (
 				6D3E8C44215CB92F0037A517 /* CoreMedia.framework in Frameworks */,
 				6D3E8C42215CB52C0037A517 /* Accelerate.framework in Frameworks */,
+				6D44CDAF215F8289004405D9 /* opencv2.framework in Frameworks */,
 				6D3E8C40215CB50C0037A517 /* libdlib.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -63,6 +70,9 @@
 		6D3E8C09215C81DF0037A517 = {
 			isa = PBXGroup;
 			children = (
+				6D1A63CC2165E37B007A8A5F /* 2223.jpg */,
+				6D44CDAE215F8288004405D9 /* opencv2.framework */,
+				6D3E8C4C215E1DAB0037A517 /* liudehua.jpg */,
 				6D3E8C3F215CB50C0037A517 /* libdlib.a */,
 				6D3E8C41215CB51B0037A517 /* Accelerate.framework */,
 				6D3E8C2E215C82D10037A517 /* shape_predictor_68_face_landmarks.dat */,
@@ -171,7 +181,9 @@
 			files = (
 				6D3E8C22215C81E20037A517 /* LaunchScreen.storyboard in Resources */,
 				6D3E8C1F215C81E20037A517 /* Assets.xcassets in Resources */,
+				6D1A63CD2165E37B007A8A5F /* 2223.jpg in Resources */,
 				6D3E8C1D215C81E00037A517 /* Main.storyboard in Resources */,
+				6D3E8C4D215E1DAB0037A517 /* liudehua.jpg in Resources */,
 				6D3E8C2F215C82D10037A517 /* shape_predictor_68_face_landmarks.dat in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -329,10 +341,14 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				CLANG_CXX_LANGUAGE_STANDARD = "compiler-default";
+				CLANG_CXX_LANGUAGE_STANDARD = "c++0x";
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = RNX29B3ME4;
 				ENABLE_BITCODE = NO;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/landmark64",
+				);
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				HEADER_SEARCH_PATHS = "$(PROJECT_DIR)/landmark64/lib";
 				INFOPLIST_FILE = landmark64/Info.plist;
@@ -356,10 +372,14 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				CLANG_CXX_LANGUAGE_STANDARD = "compiler-default";
+				CLANG_CXX_LANGUAGE_STANDARD = "c++0x";
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = RNX29B3ME4;
 				ENABLE_BITCODE = NO;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/landmark64",
+				);
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				HEADER_SEARCH_PATHS = "$(PROJECT_DIR)/landmark64/lib";
 				INFOPLIST_FILE = landmark64/Info.plist;
