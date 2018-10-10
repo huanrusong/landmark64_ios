@@ -34,7 +34,7 @@ struct correspondens{
     std::vector<Point2f> points1, points2;
     cv::Mat* imgCV1;
     cv::Mat* imgCV2;
-
+    unsigned char* bbmap;
 }
 @property (assign) BOOL prepared;
 @end
@@ -50,6 +50,7 @@ struct correspondens{
         _prepared = NO;
         imgCV1 = NULL;
         imgCV2 = NULL;
+        bbmap=NULL;
     }
     return self;
 }
@@ -66,7 +67,7 @@ struct correspondens{
 
 - (void) loadModelPicture
 {
-    NSString* imageName = [[NSBundle mainBundle] pathForResource:@"liudehua" ofType:@"jpg"];
+    NSString* imageName = [[NSBundle mainBundle] pathForResource:@"2223" ofType:@"jpg"];
     UIImage* image = [UIImage imageNamed:imageName];
     CIImage* imageCI = [CIImage imageWithCGImage:image.CGImage];
     CIContext* context = [CIContext contextWithOptions:nil];
@@ -92,6 +93,7 @@ struct correspondens{
      img.set_size(height,width );
     img.reset();
     long position = 0;
+    if(bbmap==NULL)bbmap = (unsigned char*)malloc(width*height*3);
     while (img.move_next()) {
         dlib::bgr_pixel& pixel = img.element();
         
@@ -102,6 +104,9 @@ struct correspondens{
         char b = newBitmap[bufferLocation + 2];
         newBitmap[bufferLocation + 2] = r;
         newBitmap[bufferLocation] = b;
+        bbmap[position*3] = b;
+        bbmap[position*3+1] = g;
+        bbmap[position*3+2] = r;
         dlib::bgr_pixel newpixel(b, g, r);
         pixel = newpixel;
         position++;
@@ -128,7 +133,7 @@ struct correspondens{
 //        dlib::rectangle ttt(oneFaceRect.left(),oneFaceRect.top(),oneFaceRect.right(),oneFaceRect.bottom());
 //        fill_rect(img,ttt,dlib::rgb_alpha_pixel(255, 0, 0,50));
     }
-    if(imgCV1==NULL)imgCV1 = new Mat((int)height, (int)width, CV_8UC4, newBitmap);
+    if(imgCV1==NULL)imgCV1 = new Mat((int)height, (int)width, CV_8UC3, bbmap);
 //
 //    img.reset();
 //    position = 0;
@@ -249,7 +254,7 @@ struct correspondens{
     size_t width = CVPixelBufferGetWidth(imageBuffer);
     size_t height = CVPixelBufferGetHeight(imageBuffer);
     unsigned char *baseBuffer = (unsigned char *)CVPixelBufferGetBaseAddress(imageBuffer);
-    
+    unsigned char *baseBuffer11 = (unsigned char *)malloc(width*height*3);
     // set_size expects rows, cols format
     img.set_size(height, width);
     
@@ -264,6 +269,9 @@ struct correspondens{
         char b = baseBuffer[bufferLocation];
         char g = baseBuffer[bufferLocation + 1];
         char r = baseBuffer[bufferLocation + 2];
+        baseBuffer11[position*3] = b;
+        baseBuffer11[position*3+1] = g;
+        baseBuffer11[position*3+2] = r;
         //        we do not need this
         //        char a = baseBuffer[bufferLocation + 3];
         
@@ -301,7 +309,7 @@ struct correspondens{
     CVPixelBufferLockBaseAddress(imageBuffer, 0);
     if(imgCV2==NULL)
     {
-        imgCV2 = new Mat((int)height,(int)width, CV_8UC4, baseBuffer);
+        imgCV2 = new Mat((int)height,(int)width, CV_8UC3, baseBuffer11);
     }
     Mat output;
     [self processFace:output];
@@ -316,19 +324,20 @@ struct correspondens{
     int length = 0;
     if(data!=0)
     {
-        for(length =0;length<width*height*4;)
+      //  for(length =0;length<width*height*4;)
+        for(int r = 0;r<height;r++)
         {
-            unsigned char* tmp = data+length;
-            
-            // assuming bgra format here
-            baseBuffer[length] = tmp[0];
-            baseBuffer[length + 1] = tmp[1];;
-            baseBuffer[length + 2] = tmp[2];;
-            //        we do not need this
-            //        char a = baseBuffer[bufferLocation + 3];
-            
-            length = length+4;
+            //cv::Mat line = output.row(r);
+            cv::Vec3b* p = output.ptr<cv::Vec3b>(r);
+            for(int c = 0;c<width;c++)
+            {
+                length = 4*r*width+4*c;
+                baseBuffer[length] = p[c][0];
+                baseBuffer[length + 1] = p[c][1];;
+                baseBuffer[length + 2] = p[c][2];;
+            }
         }
+//        memcpy(baseBuffer,data,4*height*width);
     }
 
 //    CVPixelBufferUnlockBaseAddress(imageBuffer, 0);
@@ -338,6 +347,11 @@ struct correspondens{
     {
         delete imgCV2;
         imgCV2 = NULL;
+    }
+    if(baseBuffer11)
+    {
+        free(baseBuffer11);
+        baseBuffer11=NULL;
     }
     points2.clear();
 }
@@ -392,8 +406,8 @@ struct correspondens{
     }
     
     
-    cv::Mat mask = cv::Mat::zeros(imgCV2->rows,imgCV2->cols,imgCV2->depth());
-    cv::fillConvexPoly(mask, &hull8U[0], (int)hull8U.size(), Scalar(255,255,255,0));
+    cv::Mat mask = cv::Mat::zeros(imgCV2->rows,imgCV2->cols,imgCV2->type());
+    cv::fillConvexPoly(mask, &hull8U[0], (int)hull8U.size(), Scalar(255,255,255));
     
     
     //NSArray *paths =NSSearchPathForDirectoriesInDomains(NSDocumentDirectory,NSUserDomainMask,YES);
@@ -402,20 +416,22 @@ struct correspondens{
     cv::Rect r = boundingRect(hull2);
     cv::Point center = (r.tl() +r.br()) / 2;
     
-    imgCV1Warped.convertTo(imgCV1Warped, CV_8UC4);
+    imgCV1Warped.convertTo(imgCV1Warped, CV_8UC3);
+    imgCV2->convertTo(*imgCV2, CV_8UC3);
+    mask.convertTo(mask, CV_8UC3);
    // output = imgCV1Warped.clone();
-    cv::seamlessClone(imgCV1Warped,*imgCV2,mask,center,output,cv::MIXED_CLONE);
+    cv::seamlessClone(imgCV1Warped,*imgCV2,mask,center,output,cv::NORMAL_CLONE);
     
 //    NSArray *paths =NSSearchPathForDirectoriesInDomains(NSDocumentDirectory,NSUserDomainMask,YES);
 //    NSString *filePath = [[paths objectAtIndex:0]stringByAppendingPathComponent:[NSString stringWithFormat:@"imgCV1Warped.jpg"]];
 //
 //    imwrite([filePath UTF8String],imgCV1Warped);
-//
+////
 //    NSString *filePath3 = [[paths objectAtIndex:0]stringByAppendingPathComponent:[NSString stringWithFormat:@"imgCV2.jpg"]];
 //
 //    imwrite([filePath3 UTF8String],*imgCV2);
-//
-//
+////
+////
 //    NSString *filePath1 = [[paths objectAtIndex:0]stringByAppendingPathComponent:[NSString stringWithFormat:@"mask.jpg"]];
 //
 //    imwrite([filePath1 UTF8String],mask);
@@ -619,14 +635,13 @@ struct correspondens{
         t2Rect.push_back( cv::Point2f( t2[i].x - r2.x, t2[i].y - r2.y) );
         t2RectInt.push_back( cv::Point(t2[i].x - r2.x, t2[i].y - r2.y) ); // for fillConvexPoly
     }
-    
-    // Get mask by filling triangle
-    Mat mask = Mat::zeros(r2.height, r2.width, CV_32FC4);
-    cv::fillConvexPoly(mask, t2RectInt, Scalar(1.0, 1.0, 1.0,0.0), 16, 0);
-    
     // Apply warpImage to small rectangular patches
     Mat img1Rect;
     img1(r1).copyTo(img1Rect);
+    
+    // Get mask by filling triangle
+    Mat mask = Mat::zeros(r2.height, r2.width,  img1Rect.type());
+    cv::fillConvexPoly(mask, t2RectInt, Scalar(1.0, 1.0, 1.0,0.0), 16, 0);
     
     Mat img2Rect = Mat::zeros(r2.height, r2.width, img1Rect.type());
     

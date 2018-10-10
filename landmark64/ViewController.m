@@ -45,7 +45,7 @@
 
 - (void) loadModelPicture
 {
-    NSString* imageName = [[NSBundle mainBundle] pathForResource:@"2223" ofType:@"jpg"];
+    NSString* imageName = [[NSBundle mainBundle] pathForResource:@"liudehua" ofType:@"jpg"];
     UIImage* image = [UIImage imageNamed:imageName];
     CIImage* imageCI = [CIImage imageWithCGImage:image.CGImage];
     CIContext* context = [CIContext contextWithOptions:nil];
