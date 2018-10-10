@@ -46,6 +46,9 @@
 /* Cocoa API */
 /* #undef HAVE_COCOA */
 
+/* C= */
+/* #undef HAVE_CSTRIPES */
+
 /* NVIDIA CUDA Basic Linear Algebra Subprograms (BLAS) API*/
 /* #undef HAVE_CUBLAS */
 
@@ -103,6 +106,9 @@
 /* #undef HAVE_IPP_ICV */
 /* #undef HAVE_IPP_IW */
 
+/* Intel IPP Async */
+/* #undef HAVE_IPP_A */
+
 /* JPEG-2000 codec */
 /* #undef HAVE_JASPER */
 
@@ -144,9 +150,6 @@
 /* OpenNI library */
 /* #undef HAVE_OPENNI2 */
 
-/* librealsense library */
-/* #undef HAVE_LIBREALSENSE */
-
 /* PNG codec */
 #define HAVE_PNG
 
@@ -170,9 +173,6 @@
 
 /* Intel Threading Building Blocks */
 /* #undef HAVE_TBB */
-
-/* Ste||ar Group High Performance ParallelX */
-/* #undef HAVE_HPX */
 
 /* TIFF codec */
 /* #undef HAVE_TIFF */

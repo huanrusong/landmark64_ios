@@ -45,7 +45,7 @@
 
 namespace cv {
 namespace dnn {
-CV__DNN_INLINE_NS_BEGIN
+CV__DNN_EXPERIMENTAL_NS_BEGIN
 //! @addtogroup dnn
 //! @{
 
@@ -234,9 +234,7 @@ CV__DNN_INLINE_NS_BEGIN
     {
     public:
         int type;
-        Size kernel, stride;
-        int pad_l, pad_t, pad_r, pad_b;
-        CV_DEPRECATED Size pad;
+        Size kernel, stride, pad;
         bool globalPooling;
         bool computeMaxIdx;
         String padMode;
@@ -619,7 +617,7 @@ CV__DNN_INLINE_NS_BEGIN
 
 //! @}
 //! @}
-CV__DNN_INLINE_NS_END
+CV__DNN_EXPERIMENTAL_NS_END
 }
 }
 #endif

@@ -244,9 +244,7 @@ enum { SOLVEPNP_ITERATIVE = 0,
 enum { CALIB_CB_ADAPTIVE_THRESH = 1,
        CALIB_CB_NORMALIZE_IMAGE = 2,
        CALIB_CB_FILTER_QUADS    = 4,
-       CALIB_CB_FAST_CHECK      = 8,
-       CALIB_CB_EXHAUSTIVE      = 16,
-       CALIB_CB_ACCURACY        = 32
+       CALIB_CB_FAST_CHECK      = 8
      };
 
 enum { CALIB_CB_SYMMETRIC_GRID  = 1,
@@ -795,7 +793,7 @@ CV_EXPORTS_W Mat initCameraMatrix2D( InputArrayOfArrays objectPoints,
 
 @param image Source chessboard view. It must be an 8-bit grayscale or color image.
 @param patternSize Number of inner corners per a chessboard row and column
-( patternSize = cv::Size(points_per_row,points_per_colum) = cv::Size(columns,rows) ).
+( patternSize = cvSize(points_per_row,points_per_colum) = cvSize(columns,rows) ).
 @param corners Output array of detected corners.
 @param flags Various operation flags that can be zero or a combination of the following values:
 -   **CALIB_CB_ADAPTIVE_THRESH** Use adaptive thresholding to convert the image to black
@@ -843,38 +841,6 @@ square grouping and ordering algorithm fails.
 CV_EXPORTS_W bool findChessboardCorners( InputArray image, Size patternSize, OutputArray corners,
                                          int flags = CALIB_CB_ADAPTIVE_THRESH + CALIB_CB_NORMALIZE_IMAGE );
 
-/** @brief Finds the positions of internal corners of the chessboard using a sector based approach.
-
-@param image Source chessboard view. It must be an 8-bit grayscale or color image.
-@param patternSize Number of inner corners per a chessboard row and column
-( patternSize = cv::Size(points_per_row,points_per_colum) = cv::Size(columns,rows) ).
-@param corners Output array of detected corners.
-@param flags Various operation flags that can be zero or a combination of the following values:
--   **CALIB_CB_NORMALIZE_IMAGE** Normalize the image gamma with equalizeHist before detection.
--   **CALIB_CB_EXHAUSTIVE ** Run an exhaustive search to improve detection rate.
--   **CALIB_CB_ACCURACY ** Up sample input image to improve sub-pixel accuracy due to aliasing effects.
-This should be used if an accurate camera calibration is required.
-
-The function is analog to findchessboardCorners but uses a localized radon
-transformation approximated by box filters being more robust to all sort of
-noise, faster on larger images and is able to directly return the sub-pixel
-position of the internal chessboard corners. The Method is based on the paper
-@cite duda2018 "Accurate Detection and Localization of Checkerboard Corners for
-Calibration" demonstrating that the returned sub-pixel positions are more
-accurate than the one returned by cornerSubPix allowing a precise camera
-calibration for demanding applications.
-
-@note The function requires a white boarder with roughly the same width as one
-of the checkerboard fields around the whole board to improve the detection in
-various environments. In addition, because of the localized radon
-transformation it is beneficial to use round corners for the field corners
-which are located on the outside of the board. The following figure illustrates
-a sample checkerboard optimized for the detection. However, any other checkerboard
-can be used as well.
-![Checkerboard](pics/checkerboard_radon.png)
- */
-CV_EXPORTS_W bool findChessboardCornersSB(InputArray image,Size patternSize, OutputArray corners,int flags=0);
-
 //! finds subpixel-accurate positions of the chessboard corners
 CV_EXPORTS bool find4QuadCornerSubpix( InputArray img, InputOutputArray corners, Size region_size );
 
@@ -915,14 +881,15 @@ struct CV_EXPORTS_W_SIMPLE CirclesGridFinderParameters
       SYMMETRIC_GRID, ASYMMETRIC_GRID
     };
     GridType gridType;
+};
+
+struct CV_EXPORTS_W_SIMPLE CirclesGridFinderParameters2 : public CirclesGridFinderParameters
+{
+    CV_WRAP CirclesGridFinderParameters2();
 
     CV_PROP_RW float squareSize; //!< Distance between two adjacent points. Used by CALIB_CB_CLUSTERING.
     CV_PROP_RW float maxRectifiedDistance; //!< Max deviation from predicion. Used by CALIB_CB_CLUSTERING.
 };
-
-#ifndef DISABLE_OPENCV_3_COMPATIBILITY
-typedef CirclesGridFinderParameters CirclesGridFinderParameters2;
-#endif
 
 /** @brief Finds centers in the grid of circles.
 
@@ -959,7 +926,13 @@ the board to make the detection more robust in various environments.
 CV_EXPORTS_W bool findCirclesGrid( InputArray image, Size patternSize,
                                    OutputArray centers, int flags,
                                    const Ptr<FeatureDetector> &blobDetector,
-                                   const CirclesGridFinderParameters& parameters);
+                                   CirclesGridFinderParameters parameters);
+
+/** @overload */
+CV_EXPORTS_W bool findCirclesGrid2( InputArray image, Size patternSize,
+                                   OutputArray centers, int flags,
+                                   const Ptr<FeatureDetector> &blobDetector,
+                                   CirclesGridFinderParameters2 parameters);
 
 /** @overload */
 CV_EXPORTS_W bool findCirclesGrid( InputArray image, Size patternSize,
@@ -2477,5 +2450,9 @@ optimization. It stays at the center or at a different location specified when C
 } // end namespace fisheye
 
 } //end namespace cv
+
+#ifndef DISABLE_OPENCV_24_COMPATIBILITY
+#include "opencv2/calib3d/calib3d_c.h"
+#endif
 
 #endif
